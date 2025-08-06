@@ -1,0 +1,25 @@
+name: Deploy fafar services with docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.FAFAR_SERVICES_PROD_PRIV_KEY }}
+
+      - name: Deploy to Server
+        run: |
+          # Add your server's IP to known_hosts to avoid host key verification prompts
+          ssh -p 20022 -o StrictHostKeyChecking=no ${{ secrets.FAFAR_SERVICES_PROD_SSH_USERNAME }}@${{ secrets.FAFAR_SERVICES_PROD_SSH_HOST }} << 'EOF'
+            /var/services-infra/up.prod.sh
+          EOF
