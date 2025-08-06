@@ -70,6 +70,10 @@ clone_or_update_repo \
 # ln -sf ../../../../escuta-website/html/wp-content/plugins/fafar-cf7crud \
 #    ./institutional-website/html/wp-content/plugins/fafar-cf7crud
 
+# Pull from service-infra
+echo "Pulling from service-infra repo"
+git pull
+
 # --- Start Docker ---
 echo "Starting Docker containers..."
 docker compose --env-file=.env -f compose.yaml -f compose.dev.yaml up --build
