@@ -1,0 +1,50 @@
+services:
+  institutional-website:
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      interval: 40s
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    extra_hosts:
+      - "www.farmacia.ufmg.br:10.10.10.1" # Use-se o Proxy Reverso por causa das requisições em HTTPS
+      - "farmacia.ufmg.br:10.10.10.1" # Use-se o Proxy Reverso por causa das requisições em HTTPS
+
+  intranet-website:
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      interval: 40s
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    extra_hosts:
+      - "intranet.farmacia.ufmg.br:10.10.10.1" # Use-se o Proxy Reverso por causa das requisições em HTTPS
+
+  escuta-website:
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      interval: 40s
+      timeout: 1s
+      retries: 2
+      start_period: 10s
+    extra_hosts:
+      - "escuta.farmacia.ufmg.br:10.10.10.1" # Use-se o Proxy Reverso por causa das requisições em HTTPS
+
+  autoheal:
+    restart: always
+    image: willfarrell/autoheal
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=all
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  portainer_agent:
+    image: portainer/agent:2.27.7
+    container_name: portainer_agent
+    restart: always
+    ports:
+      - "9001:9001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - /:/host

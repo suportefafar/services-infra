@@ -1,0 +1,144 @@
+services:
+  institutional-website:
+    # image: wordpress:${INSTITUTIONAL_WEBSITE_IMAGE_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+      args:
+        WP_IMAGE_VERSION: ${INSTITUTIONAL_WEBSITE_IMAGE_VERSION}
+    user: ${UID}:${GID}
+    post_start:
+      - command: chown -R ${UID}:${GID} /var/www/html
+        user: root
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8001
+        protocol: tcp
+    environment:
+      WORDPRESS_DB_HOST: ${INSTITUTIONAL_WEBSITE_DB_HOST}
+      WORDPRESS_DB_USER: ${INSTITUTIONAL_WEBSITE_DB_USER}
+      WORDPRESS_DB_NAME: ${INSTITUTIONAL_WEBSITE_DB_NAME}
+      WORDPRESS_DB_PASSWORD: ${INSTITUTIONAL_WEBSITE_DB_PASSWORD}
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_ENVIRONMENT_TYPE', '${ENVIRONMENT_TYPE}' );
+    volumes:
+      - type: bind
+        source: ./institutional-website/html/
+        target: /var/www/html/
+      - type: bind
+        source: ./local.ini
+        target: /usr/local/etc/php/conf.d/local.ini
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1024M
+          # pids: 2
+        reservations:
+          cpus: "1"
+          memory: 512M
+    extra_hosts:
+      - "www.farmacia.ufmg.br=host-gateway"
+      - "farmacia.ufmg.br=host-gateway"
+
+  intranet-website:
+    # image: wordpress:${INTRANET_WEBSITE_IMAGE_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+      args:
+        WP_IMAGE_VERSION: ${INTRANET_WEBSITE_IMAGE_VERSION}
+    user: ${UID}:${GID}
+    post_start:
+      - command: chown -R ${UID}:${GID} /var/www/html
+        user: root
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8002
+        protocol: tcp
+    environment:
+      WORDPRESS_DB_HOST: ${INTRANET_WEBSITE_DB_HOST}
+      WORDPRESS_DB_USER: ${INTRANET_WEBSITE_DB_USER}
+      WORDPRESS_DB_NAME: ${INTRANET_WEBSITE_DB_NAME}
+      WORDPRESS_DB_PASSWORD: ${INTRANET_WEBSITE_DB_PASSWORD}
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_ENVIRONMENT_TYPE', '${ENVIRONMENT_TYPE}' );
+    volumes:
+      - type: bind
+        source: ./intranet-website/html/
+        target: /var/www/html/
+      - type: bind
+        source: ./local.ini
+        target: /usr/local/etc/php/conf.d/local.ini
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1024M
+          # pids: 2
+        reservations:
+          cpus: "1"
+          memory: 512M
+    extra_hosts:
+      - "intranet.farmacia.ufmg.br=host-gateway"
+
+  escuta-website:
+    # image: wordpress:${ESCUTA_WEBSITE_IMAGE_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+      args:
+        WP_IMAGE_VERSION: ${ESCUTA_WEBSITE_IMAGE_VERSION}
+    user: ${UID}:${GID}
+    post_start:
+      - command: chown -R ${UID}:${GID} /var/www/html
+        user: root
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8003
+        protocol: tcp
+    environment:
+      WORDPRESS_DB_HOST: ${ESCUTA_WEBSITE_DB_HOST}
+      WORDPRESS_DB_USER: ${ESCUTA_WEBSITE_DB_USER}
+      WORDPRESS_DB_NAME: ${ESCUTA_WEBSITE_DB_NAME}
+      WORDPRESS_DB_PASSWORD: ${ESCUTA_WEBSITE_DB_PASSWORD}
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_ENVIRONMENT_TYPE', '${ENVIRONMENT_TYPE}' );
+    volumes:
+      - type: bind
+        source: ./escuta-website/html/
+        target: /var/www/html/
+      - type: bind
+        source: ./local.ini
+        target: /usr/local/etc/php/conf.d/local.ini
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1024M
+          # pids: 2
+        reservations:
+          cpus: "1"
+          memory: 512M
+    extra_hosts:
+      - "escuta.farmacia.ufmg.br=host-gateway"
+
+  phpmyadmin:
+    image: phpmyadmin
+    environment:
+      PMA_HOST: ${PHPMYADMIN_DB_HOST}
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8081
+        protocol: tcp
+    restart: unless-stopped
