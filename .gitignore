@@ -1,3 +1,13 @@
+# FAFAR Services Dev & Prod
+escuta-website/
+institutional-website/
+intranet-website/
+prometheus-bot/
+sagp/
+stage-manager/
+temis/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
