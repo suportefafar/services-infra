@@ -54,4 +54,4 @@ clone_or_update_repo \
 
 # --- Start Docker ---
 echo "Starting Docker containers..."
-docker compose --env-file=.env -f compose.yaml -f compose.dev.yaml up --build
+docker compose --env-file=.env -f compose.yaml -f compose.prod.yaml up --build
