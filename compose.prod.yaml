@@ -1,5 +1,10 @@
 services:
   institutional-website:
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8001
+        protocol: tcp
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
       interval: 40s
@@ -11,6 +16,11 @@ services:
       - "farmacia.ufmg.br:10.10.10.1" # Use-se o Proxy Reverso por causa das requisições em HTTPS
 
   intranet-website:
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8002
+        protocol: tcp
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
       interval: 40s
@@ -21,6 +31,11 @@ services:
       - "intranet.farmacia.ufmg.br:10.10.10.1" # Use-se o Proxy Reverso por causa das requisições em HTTPS
 
   escuta-website:
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8003
+        protocol: tcp
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
       interval: 40s

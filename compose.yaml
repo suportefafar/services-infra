@@ -11,11 +11,6 @@ services:
     post_start:
       - command: chown -R ${UID}:${GID} /var/www/html
         user: root
-    ports:
-      - mode: ingress
-        target: 80
-        published: 8001
-        protocol: tcp
     environment:
       WORDPRESS_DB_HOST: ${INSTITUTIONAL_WEBSITE_DB_HOST}
       WORDPRESS_DB_USER: ${INSTITUTIONAL_WEBSITE_DB_USER}
@@ -56,11 +51,6 @@ services:
     post_start:
       - command: chown -R ${UID}:${GID} /var/www/html
         user: root
-    ports:
-      - mode: ingress
-        target: 80
-        published: 8002
-        protocol: tcp
     environment:
       WORDPRESS_DB_HOST: ${INTRANET_WEBSITE_DB_HOST}
       WORDPRESS_DB_USER: ${INTRANET_WEBSITE_DB_USER}
@@ -100,11 +90,6 @@ services:
     post_start:
       - command: chown -R ${UID}:${GID} /var/www/html
         user: root
-    ports:
-      - mode: ingress
-        target: 80
-        published: 8003
-        protocol: tcp
     environment:
       WORDPRESS_DB_HOST: ${ESCUTA_WEBSITE_DB_HOST}
       WORDPRESS_DB_USER: ${ESCUTA_WEBSITE_DB_USER}
