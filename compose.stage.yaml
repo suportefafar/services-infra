@@ -1,0 +1,89 @@
+services:
+  institutional-website:
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8001
+        protocol: tcp
+    environment:
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_HOME', 'https://stage.farmacia.ufmg.br' );
+        define( 'WP_SITEURL', 'https://stage.farmacia.ufmg.br' );
+        define( 'WP_ENVIRONMENT_TYPE', '${ENVIRONMENT_TYPE}' );
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Para comunicação do X Debug com o host
+
+  intranet-website:
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8002
+        protocol: tcp
+    environment:
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_HOME', 'https://intranet.stage.farmacia.ufmg.br' );
+        define( 'WP_SITEURL', 'https://intranet.stage.farmacia.ufmg.br' );
+        define( 'WP_ENVIRONMENT_TYPE', '${ENVIRONMENT_TYPE}' );
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Para comunicação do X Debug com o host
+
+  escuta-website:
+    ports:
+      - mode: ingress
+        target: 80
+        published: 8003
+        protocol: tcp
+    environment:
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_HOME', 'https://escuta.stage.farmacia.ufmg.br' );
+        define( 'WP_SITEURL', 'https://escuta.stage.farmacia.ufmg.br' );
+        define( 'WP_ENVIRONMENT_TYPE', '${ENVIRONMENT_TYPE}' );
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Para comunicação do X Debug com o host
+
+  db:
+    image: mysql:5.7
+    command:
+      # - "--default-authentication-plugin=mysql_native_password" # Is not necessary for WP 5.4+
+      - "--innodb-file-per-table=1"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+      - "--max_allowed_packet=64M"
+      - "--innodb_buffer_pool_size=1G"
+    restart: always
+    ports:
+      - "3306:3306"
+      - "33060:33060"
+    volumes:
+      - type: volume
+        source: database-volume
+        target: /var/lib/mysql
+      # To load a mysql dump (anyname.sql.gz):
+      - type: bind
+        source: ./db/initdb.d/
+        target: /docker-entrypoint-initdb.d/
+    environment:
+      # MYSQL_DATABASE: ${AWESOME_MYSQL_DATABASE}
+      # MYSQL_USER: ${AWESOME_MYSQL_USER}
+      # MYSQL_PASSWORD: ${AWESOME_MYSQL_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
+      # MYSQL_DB_PASSWORD_FILE: /run/secrets/db-root-pass
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "1.5"
+    #       memory: 512M
+    #     reservations:
+    #       cpus: "1"
+    #       memory: 1024M
+    # secrets:
+    #   - db-root-pass
+
+volumes:
+  database-volume:
